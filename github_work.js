@@ -1,3 +1,5 @@
+/** Github加速 */
+
 'use strict'
 
 const ASSET_URL = 'https://meteor-showers.github.io/github_proxy/'
@@ -10,7 +12,6 @@ const Config = {
 
 const whiteList = [] // 白名单，路径里面有包含字符的才会通过，e.g. ['/username/']
 
-/** @type {ResponseInit} */
 const PREFLIGHT_INIT = {
     status: 204,
     headers: new Headers({
@@ -45,7 +46,6 @@ addEventListener('fetch', e => {
         .catch(err => makeRes('cfworker error:\n' + err.stack, 502))
     e.respondWith(ret)
 })
-
 
 function checkUrl(u) {
     for (let i of [exp1, exp2, exp3, exp4, exp5, exp6]) {
@@ -83,15 +83,8 @@ async function fetchHandler(e) {
     }
 }
 
-
-/**
- * @param {Request} req
- * @param {string} pathname
- */
 function httpHandler(req, pathname) {
     const reqHdrRaw = req.headers
-
-    // preflight
     if (req.method === 'OPTIONS' &&
         reqHdrRaw.has('access-control-request-headers')
     ) {
@@ -116,7 +109,6 @@ function httpHandler(req, pathname) {
     }
     const urlObj = newUrl(urlStr)
 
-    /** @type {RequestInit} */
     const reqInit = {
         method: req.method,
         headers: reqHdrNew,
@@ -126,12 +118,6 @@ function httpHandler(req, pathname) {
     return proxy(urlObj, reqInit)
 }
 
-
-/**
- *
- * @param {URL} urlObj
- * @param {RequestInit} reqInit
- */
 async function proxy(urlObj, reqInit) {
     const res = await fetch(urlObj.href, reqInit)
     const resHdrOld = res.headers
