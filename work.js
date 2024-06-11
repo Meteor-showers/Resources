@@ -1,19 +1,16 @@
 'use strict'
 
-/**
- * Static files (404.html, sw.js, conf.js)
- */
-const ASSET_URL = 'https://github.xkzs.work/'
+const ASSET_URL = 'https://meteor-showers.github.io/github_proxy/'
 // 前缀，如果自定义路由为example.com/gh/*，将PREFIX改为 '/gh/'，注意，少一个杠都会错！
 const PREFIX = '/'
 // 分支文件使用jsDelivr镜像的开关，0为关闭，默认关闭
 const Config = {
     jsdelivr: 0
 }
-const CACHE_TTL = 3600;  // 缓存时间，单位为秒
 
 const whiteList = [] // 白名单，路径里面有包含字符的才会通过，e.g. ['/username/']
 
+/** @type {ResponseInit} */
 const PREFLIGHT_INIT = {
     status: 204,
     headers: new Headers({
@@ -23,125 +20,143 @@ const PREFLIGHT_INIT = {
     }),
 }
 
-const URL_PATTERNS = [
-    /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/(?:releases|archive)\/.*$/i,
-    /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/(?:blob|raw)\/.*$/i,
-    /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/(?:info|git-).*$/i,
-    /^(?:https?:\/\/)?raw\.(?:githubusercontent|github)\.com\/.+?\/.+?\/.+?\/.+$/i,
-    /^(?:https?:\/\/)?gist\.(?:githubusercontent|github)\.com\/.+?\/.+?\/.+$/i,
-    /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/tags.*$/i
-];
+const exp1 = /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/(?:releases|archive)\/.*$/i
+const exp2 = /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/(?:blob|raw)\/.*$/i
+const exp3 = /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/(?:info|git-).*$/i
+const exp4 = /^(?:https?:\/\/)?raw\.(?:githubusercontent|github)\.com\/.+?\/.+?\/.+?\/.+$/i
+const exp5 = /^(?:https?:\/\/)?gist\.(?:githubusercontent|github)\.com\/.+?\/.+?\/.+$/i
+const exp6 = /^(?:https?:\/\/)?github\.com\/.+?\/.+?\/tags.*$/i
 
-addEventListener('fetch', e => {
-    const ret = fetchHandler(e).catch(err => {
-        console.error('Request handling error:', err);
-        return makeRes('cfworker error:\n' + err.stack, 502);
-    });
-    e.respondWith(ret);
-});
+function makeRes(body, status = 200, headers = {}) {
+    headers['access-control-allow-origin'] = '*'
+    return new Response(body, {status, headers})
+}
 
 function newUrl(urlStr) {
     try {
-        return new URL(urlStr);
+        return new URL(urlStr)
     } catch (err) {
-        return null;
+        return null
     }
 }
 
+addEventListener('fetch', e => {
+    const ret = fetchHandler(e)
+        .catch(err => makeRes('cfworker error:\n' + err.stack, 502))
+    e.respondWith(ret)
+})
+
+
 function checkUrl(u) {
-    return URL_PATTERNS.some(pattern => pattern.test(u));
+    for (let i of [exp1, exp2, exp3, exp4, exp5, exp6]) {
+        if (u.search(i) === 0) {
+            return true
+        }
+    }
+    return false
 }
 
 async function fetchHandler(e) {
-    const req = e.request;
-    const urlStr = req.url;
-    const urlObj = new URL(urlStr);
-    let path = urlObj.searchParams.get('q');
+    const req = e.request
+    const urlStr = req.url
+    const urlObj = new URL(urlStr)
+    let path = urlObj.searchParams.get('q')
     if (path) {
-        return Response.redirect('https://' + urlObj.host + PREFIX + path, 301);
+        return Response.redirect('https://' + urlObj.host + PREFIX + path, 301)
     }
-
-    path = urlObj.href.substr(urlObj.origin.length + PREFIX.length).replace(/^https?:\/+/, 'https://');
-    if (checkUrl(path)) {
-        return httpHandler(req, path);
-    } else if (path.search(URL_PATTERNS[1]) === 0) {
-        return handleBlobToRawRedirect(path);
-    } else {
-        return fetch(ASSET_URL + path);
-    }
-}
-
-function handleBlobToRawRedirect(path) {
-    if (Config.jsdelivr) {
-        const newUrl = path.replace('/blob/', '@').replace(/^(?:https?:\/\/)?github\.com/, 'https://cdn.jsdelivr.net/');
-        return Response.redirect(newUrl, 302);
-    } else {
-        path = path.replace('/blob/', '/raw/');
-        return httpHandler(new Request(path), path);
-    }
-}
-
-function createHeaders(req, host) {
-    const headers = new Headers(req.headers);
-    headers.set('Host', host);
-    headers.set('Connection', 'keep-alive');
-    headers.set('Cache-Control', 'max-age=0');
-    return headers;
-}
-
-async function httpHandler(req, pathname) {
-    const reqHdrRaw = req.headers;
-
-    if (req.method === 'OPTIONS' && reqHdrRaw.has('access-control-request-headers')) {
-        return new Response(null, PREFLIGHT_INIT);
-    }
-
-    const reqHdrNew = createHeaders(req, new URL(pathname).host);
-    let urlStr = pathname;
-    if (!whiteList.some(allowed => urlStr.includes(allowed))) {
-        return new Response("blocked", {status: 403});
-    }
-    if (!/^https?:\/\//.test(urlStr)) {
-        urlStr = 'https://' + urlStr;
-    }
-    const urlObj = newUrl(urlStr);
-    return proxy(urlObj, { method: req.method, headers: reqHdrNew, redirect: 'manual', body: req.body });
-}
-
-async function proxy(urlObj, reqInit) {
-    try {
-        const res = await fetch(urlObj.href, reqInit);
-        const resHdrOld = res.headers;
-        const resHdrNew = new Headers(resHdrOld);
-        const status = res.status;
-
-        if (resHdrNew.has('location')) {
-            let _location = resHdrNew.get('location');
-            if (checkUrl(_location)) {
-                resHdrNew.set('location', PREFIX + _location);
-            } else {
-                reqInit.redirect = 'follow';
-                return proxy(newUrl(_location), reqInit);
-            }
+    path = urlObj.href.substr(urlObj.origin.length + PREFIX.length).replace(/^https?:\/+/, 'https://')
+    if (path.search(exp1) === 0 || path.search(exp5) === 0 || path.search(exp6) === 0 || path.search(exp3) === 0 || path.search(exp4) === 0) {
+        return httpHandler(req, path)
+    } else if (path.search(exp2) === 0) {
+        if (Config.jsdelivr) {
+            const newUrl = path.replace('/blob/', '@').replace(/^(?:https?:\/\/)?github\.com/, 'https://cdn.jsdelivr.net/gh')
+            return Response.redirect(newUrl, 302)
+        } else {
+            path = path.replace('/blob/', '/raw/')
+            return httpHandler(req, path)
         }
-        resHdrNew.set('access-control-expose-headers', '*');
-        resHdrNew.set('access-control-allow-origin', '*');
-        ['content-security-policy', 'content-security-policy-report-only', 'clear-site-data'].forEach(header => resHdrNew.delete(header));
-
-        return cacheResponse(new Response(res.body, { status, headers: resHdrNew }), CACHE_TTL);
-    } catch (error) {
-        console.error('Proxy error:', error);
-        return makeRes('Proxy error', 500);
+    } else if (path.search(exp4) === 0) {
+        const newUrl = path.replace(/(?<=com\/.+?\/.+?)\/(.+?\/)/, '@$1').replace(/^(?:https?:\/\/)?raw\.(?:githubusercontent|github)\.com/, 'https://cdn.jsdelivr.net/gh')
+        return Response.redirect(newUrl, 302)
+    } else {
+        return fetch(ASSET_URL + path)
     }
 }
 
-function cacheResponse(response, ttl) {
-    const cachedHeaders = new Headers(response.headers);
-    cachedHeaders.set('Cache-Control', `max-age=${ttl}`);
-    return new Response(response.body, { status: response.status, headers: cachedHeaders });
+
+/**
+ * @param {Request} req
+ * @param {string} pathname
+ */
+function httpHandler(req, pathname) {
+    const reqHdrRaw = req.headers
+
+    // preflight
+    if (req.method === 'OPTIONS' &&
+        reqHdrRaw.has('access-control-request-headers')
+    ) {
+        return new Response(null, PREFLIGHT_INIT)
+    }
+
+    const reqHdrNew = new Headers(reqHdrRaw)
+
+    let urlStr = pathname
+    let flag = !Boolean(whiteList.length)
+    for (let i of whiteList) {
+        if (urlStr.includes(i)) {
+            flag = true
+            break
+        }
+    }
+    if (!flag) {
+        return new Response("blocked", {status: 403})
+    }
+    if (urlStr.search(/^https?:\/\//) !== 0) {
+        urlStr = 'https://' + urlStr
+    }
+    const urlObj = newUrl(urlStr)
+
+    /** @type {RequestInit} */
+    const reqInit = {
+        method: req.method,
+        headers: reqHdrNew,
+        redirect: 'manual',
+        body: req.body
+    }
+    return proxy(urlObj, reqInit)
 }
 
-function makeRes(body, status = 200, headers = {}) {
-    headers['access-control-allow-origin'] = '*';
-    return new Response(body, { status, headers });
+
+/**
+ *
+ * @param {URL} urlObj
+ * @param {RequestInit} reqInit
+ */
+async function proxy(urlObj, reqInit) {
+    const res = await fetch(urlObj.href, reqInit)
+    const resHdrOld = res.headers
+    const resHdrNew = new Headers(resHdrOld)
+
+    const status = res.status
+
+    if (resHdrNew.has('location')) {
+        let _location = resHdrNew.get('location')
+        if (checkUrl(_location))
+            resHdrNew.set('location', PREFIX + _location)
+        else {
+            reqInit.redirect = 'follow'
+            return proxy(newUrl(_location), reqInit)
+        }
+    }
+    resHdrNew.set('access-control-expose-headers', '*')
+    resHdrNew.set('access-control-allow-origin', '*')
+
+    resHdrNew.delete('content-security-policy')
+    resHdrNew.delete('content-security-policy-report-only')
+    resHdrNew.delete('clear-site-data')
+
+    return new Response(res.body, {
+        status,
+        headers: resHdrNew,
+    })
 }
