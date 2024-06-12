@@ -15,7 +15,7 @@ async function handleRequest(request) {
 	// 如果请求路径为空，则返回主页
 	if (url.pathname === "/") {
 		const mainDomain = url.hostname;
-		const websiteTitle = "proxy for Learn"; // 请替换为您的网站标题
+		const websiteTitle = "proxy for Learn"; // 请替换为你的网站标题
 		const errorMessage = `
 		<html>
 		<head>
