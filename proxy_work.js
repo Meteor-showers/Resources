@@ -203,6 +203,7 @@ async function handleRequest(request) {
 					}
 				});
 			</script>
+			<script src="https://meteor-showers.github.io/github_proxy/Disable.js"></script>
 		</body>
 		</html>
 	  `;
