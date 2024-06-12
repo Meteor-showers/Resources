@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            /* background-image: url('https://www.example.com/your-background-image.jpg'); 替换为你的背景图片链接 */
+            /* background-image: url('https://www.example.com/your-background-image.jpg'); 替换为背景图片链接 */
             background-size: cover;
             background-color: #f4f4f9;
             color: #333;
@@ -102,58 +102,7 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/gh/lrsjng/jquery-qrcode@0.18.0/dist/jquery-qrcode.min.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            function qr(text) {
-                var options = {
-                    render: 'canvas',
-                    size: 300,
-                    ecLevel: 'Q',
-                    fill: '#233',
-                    background: null,
-                    text: text,
-                    label: 'xkzs',
-                    fontname: 'sans',
-                    fontcolor: '#233',
-                    quiet: 0,
-                    mode: 2
-                };
-                $("#qrcode").empty().qrcode(options);
-            }
-
-            $("#generate").on("click", function () {
-                var v = $("#text").val();
-                if (v === "") {
-                    $("#qrcode").html('输入内容呀。。。没有内容生成个蛋啊。。。。');
-                } else {
-                    qr(v);
-                }
-            });
-
-            $("#text").on("input", function () {
-                if ($(this).val() === "") {
-                    $("#qrcode").empty();
-                }
-            });
-
-            function getParameterByName(name, url) {
-                if (!url) url = window.location.href;
-                name = name.replace(/[\[\]]/g, '\\$&');
-                var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-                    results = regex.exec(url);
-                if (!results) return null;
-                if (!results[2]) return '';
-                return decodeURIComponent(results[2].replace(/\+/g, ' '));
-            }
-
-            var initialText = getParameterByName('text');
-            if (initialText) {
-                $("#text").val(initialText);
-                qr(initialText);
-            }
-        });
-    </script>
+    <script src="https://meteor-showers.github.io/github_proxy/qr.js"></script>
     <script src="https://meteor-showers.github.io/github_proxy/Disable.js"></script>
 </body>
-
 </html>
