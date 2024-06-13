@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>GitHub地址转换为jsDelivr链接</title>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/32284743?v=4" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🌟 GitHub地址转换为jsDelivr链接</h1>
+
+<div class="input-group">
+    <input type="text" id="githubUrl" placeholder="请输入GitHub文件地址" oninput="clearResult()" onkeypress="handleKeyPress(event)">
+    <button onclick="convertToJsDelivr()">转换</button>
+</div>
+
+<div class="result" id="result"></div>
+
+<script src="https://cdn.jsdelivr.net/gh/Meteor-showers/github_proxy@main/g2j.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Meteor-showers/github_proxy@main/Disable.js"></script>
+</body>
+</html>
