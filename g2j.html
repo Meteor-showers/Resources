@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>GitHub地址转换为jsDelivr链接</title>
+    <title>GitHub To JsDelivr</title>
     <link rel="icon" href="https://avatars.githubusercontent.com/u/32284743?v=4" type="image/x-icon">
     <style>
         body {
@@ -55,6 +55,52 @@
         }
         .copy-btn:hover {
             background-color: #218838;
+        }
+
+        /* 白天模式 */
+        @media (prefers-color-scheme: light) {
+            body {
+                background-color: white;
+                color: black;
+            }
+            input[type="text"] {
+                border-color: #ccc;
+            }
+            .result {
+                background-color: #f9f9f9;
+                border-color: #ccc;
+            }
+        }
+
+        /* 黑夜模式 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #e1e1e1;
+            }
+            input[type="text"] {
+                border-color: #555;
+                background-color: #333;
+                color: #e1e1e1;
+            }
+            button {
+                background-color: #007bff;
+                color: white;
+            }
+            button:hover {
+                background-color: #0056b3;
+            }
+            .result {
+                background-color: #333;
+                border-color: #555;
+            }
+            .copy-btn {
+                background-color: #28a745;
+                color: white;
+            }
+            .copy-btn:hover {
+                background-color: #218838;
+            }
         }
     </style>
 </head>
