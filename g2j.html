@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>GitHub To JsDelivr</title>
+    <title>Migrating from GitHub to jsDelivr</title>
     <link rel="icon" href="https://avatars.githubusercontent.com/u/32284743?v=4" type="image/x-icon">
     <style>
         body {
@@ -10,6 +10,7 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
         }
         .input-group {
             display: flex;
@@ -42,19 +43,37 @@
             background-color: #f9f9f9;
             position: relative;
         }
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+        .result p {
+            display: inline;
+        }
+        .result-container {
+            display: flex;
+            align-items: center;
+        }
+        .copy-btn, .purge-btn {
+            margin-left: 10px;
             padding: 5px 10px;
-            background-color: #28a745;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
+        .copy-btn {
+            background-color: #28a745;
+        }
         .copy-btn:hover {
             background-color: #218838;
+        }
+        .purge-btn {
+            background-color: #dc3545;
+        }
+        .purge-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* 按钮点击后样式 */
+        .clicked {
+            background-color: #ffa500 !important;
         }
 
         /* 白天模式 */
@@ -101,12 +120,18 @@
             .copy-btn:hover {
                 background-color: #218838;
             }
+            .purge-btn {
+                background-color: #dc3545;
+            }
+            .purge-btn:hover {
+                background-color: #c82333;
+            }
         }
     </style>
 </head>
 <body>
 
-<h1>🌟 GitHub地址转换为jsDelivr链接</h1>
+<h1>🌟 Migrating from GitHub to jsDelivr</h1>
 
 <div class="input-group">
     <input type="text" id="githubUrl" placeholder="请输入GitHub文件地址" oninput="clearResult()" onkeypress="handleKeyPress(event)">
