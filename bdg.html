@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>徽章生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+
+        label {
+            width: 80px;
+            display: inline-block;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        input[type="text"],
+        select {
+            width: auto;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-width: 100px;
+        }
+
+        #logoInput {
+            margin-right: 10px;
+        }
+
+        input[type="color"] {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            /* border: none; */
+            cursor: pointer;
+            margin-left: 10px;
+            /* border-radius: 50%; */
+        }
+
+        .preview-container,
+        .copy-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: #fff;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .copy-container label {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .copy-container input {
+            /* flex-grow: 1; */
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 60%;
+        }
+
+        .copy-container button {
+            padding: 8px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .copy-container button:active {
+            background-color: #0056b3;
+        }
+
+        .generate-button {
+            padding: 8px 16px;
+            border: none;
+            background-color: #28a745;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .generate-button:active {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>徽章生成器</h1>
+        <div class="row">
+            <label for="logo">Logo</label>
+            <input type="text" id="logoInput" placeholder="输入Logo名称或选择" oninput="filterLogos()" />
+            <select id="logoSelect" onchange="selectLogo()">
+                <option value="">无</option>
+                <option value="github">GitHub</option>
+                <option value="gitlab">GitLab</option>
+                <option value="bitbucket">Bitbucket</option>
+                <option value="docker">Docker</option>
+                <option value="linux">Linux</option>
+                <option value="jenkins">Jenkins</option>
+                <option value="travis">Travis CI</option>
+                <option value="circleci">CircleCI</option>
+                <option value="aws">AWS</option>
+                <option value="azure">Azure</option>
+                <option value="gcp">GCP</option>
+                <option value="ansible">Ansible</option>
+                <option value="apache">Apache</option>
+                <option value="bash">Bash</option>
+                <option value="c">C</option>
+                <option value="cplusplus">C++</option>
+                <option value="csharp">C#</option>
+                <option value="debian">Debian</option>
+                <option value="django">Django</option>
+                <option value="dotnet">.NET</option>
+                <option value="fedora">Fedora</option>
+                <option value="freebsd">FreeBSD</option>
+                <option value="gimp">GIMP</option>
+                <option value="gnu">GNU</option>
+                <option value="go">Go</option>
+                <option value="html5">HTML5</option>
+                <option value="java">Java</option>
+                <option value="javascript">JavaScript</option>
+                <option value="kotlin">Kotlin</option>
+                <option value="laravel">Laravel</option>
+                <option value="mysql">MySQL</option>
+                <option value="nginx">Nginx</option>
+                <option value="nodejs">Node.js</option>
+                <option value="php">PHP</option>
+                <option value="postgresql">PostgreSQL</option>
+                <option value="python">Python</option>
+                <option value="raspberrypi">Raspberry Pi</option>
+                <option value="redis">Redis</option>
+                <option value="ruby">Ruby</option>
+                <option value="rust">Rust</option>
+                <option value="scala">Scala</option>
+                <option value="slack">Slack</option>
+                <option value="sqlite">SQLite</option>
+                <option value="ubuntu">Ubuntu</option>
+                <option value="vscode">VS Code</option>
+                <option value="vuejs">Vue.js</option>
+                <option value="webpack">Webpack</option>
+                <option value="wordpress">WordPress</option>
+                <option value="yarn">Yarn</option>
+                <!-- 添加更多选项 -->
+            </select>
+        </div>
+        <div class="row">
+            <label for="label">标签</label>
+            <input type="text" id="label" placeholder="输入标签文本" oninput="updateBadgePreview()" />
+        </div>
+        <div class="row">
+            <label for="message">消息</label>
+            <input type="text" id="message" placeholder="输入消息文本" oninput="updateBadgePreview()" />
+        </div>
+        <div class="row">
+            <label for="labelColor">标签颜色</label>
+            <input type="color" id="labelColor" onchange="updateBadgePreview()" />
+        </div>
+        <div class="row">
+            <label for="messageColor">消息颜色</label>
+            <input type="color" id="messageColor" onchange="updateBadgePreview()" />
+        </div>
+        <div class="row">
+            <label for="style">样式</label>
+            <select id="style" onchange="updateBadgePreview()">
+                <option value="flat">flat</option>
+                <option value="flat-square">flat-square</option>
+                <option value="plastic">plastic</option>
+                <option value="for-the-badge">for-the-badge</option>
+                <option value="social">social</option>
+            </select>
+            <button class="generate-button" onclick="generateBadge()">生成徽章</button>
+        </div>
+        <div class="preview-container">
+            <h2>预览</h2>
+            <img id="badgePreview" src="" alt="徽章预览" class="badge" style="display: none;" />
+        </div>
+        <div class="copy-container">
+            <label for="badgeUrl">徽章地址</label>
+            <input type="text" id="badgeUrl" readonly placeholder="徽章URL" style="width: 50%;" />
+            <button id="copyButton" onclick="copyBadgeUrl()">复制URL</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/Meteor-showers/github_proxy@main/bdg.js?v=1.0"></script>
+    <script src="https://cdn.jsdelivr.net/gh/Meteor-showers/github_proxy@main/Disable.js?v=1.0"></script>
+</body>
+
+</html>
