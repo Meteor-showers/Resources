@@ -89,8 +89,7 @@ selinux_config()
 }
 
 # ulimit config
-ulimit_config()
-{
+ulimit_config(){
     echo "Starting ulimit configuration..."
     cat >> /etc/security/limits.conf <<EOF
 * soft nproc 8192
@@ -99,7 +98,7 @@ ulimit_config()
 * hard nofile 8192
 EOF
 
-    [ $? -eq 0 ] && echo "Ulimit configuration complete!"
+[ $? -eq 0 ] && echo "Ulimit configuration complete!"
 }
 
 # sshd config
@@ -194,7 +193,7 @@ EOF
 # ipv6 config
 disable_ipv6() {
     echo "Starting to disable IPv6..."
-    sed -i '$ a\net.ipv6.conf.all.disable_ipv6 = 1\net.ipv6.conf.default.disable_ipv6 = 1' /etc/sysctl.conf
+    sed -i '$ a\net.ipv6.conf.all.disable_ipv6 = 1\nnet.ipv6.conf.default.disable_ipv6 = 1' /etc/sysctl.conf
     sed -i '$ a\AddressFamily inet' /etc/ssh/sshd_config
     systemctl restart sshd
     /usr/sbin/sysctl -p
