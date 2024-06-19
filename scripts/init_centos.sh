@@ -12,7 +12,6 @@
 
 # Check if user is root
 #
-
 if [ $(id -u) != "0" ]; then
     echo "Error: You must be root to run this script, please use root to initialization OS."
     exit 1
@@ -35,13 +34,12 @@ modify_hostname()
     ip_last_two=$(echo "$ip_address" | awk -F. '{print $(NF-1)$NF}')
     full_name="${machine_name}-$ip_last_two"
     hostnamectl --static set-hostname "$full_name"
-    echo "Hostname modifyed $full_name."
+    echo "Hostname modified to $full_name."
 }
 
-# add  user
+# add user
 user_add()
 {
-    # add user for use
     read -p "Enter username for the new user: " new_username
     if id "$new_username" >/dev/null 2>&1; then
         echo "User $new_username already exists."
@@ -49,17 +47,17 @@ user_add()
         read -s -p "Enter password for $new_username: " userpassword
         echo
         useradd -s /bin/bash -d "/home/$new_username" -m "$new_username" && echo "$userpassword" | passwd --stdin "$new_username" && echo "$new_username ALL=(ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/$new_username"
-        echo "User $new_username successfully added"
+        echo "User $new_username successfully added."
     fi
 }
 
-# update system & install pakeage
+# update system & install package
 system_update(){
-    echo "*** Starting update system && install tools pakeage... ***"
+    echo "*** Starting system update and tool package installation... ***"
     yum install epel-release -y && yum -y update
     yum clean all && yum makecache
     yum install -y bash-completion vim lrzsz wget expect net-tools nc nmap rsync lsof tcpdump traceroute man tree dos2unix htop iftop iotop unzip sysstat telnet sl psmisc nethogs glances bc ntpdate vim-enhanced openldap-devel nano dig git screen
-    [ $? -eq 0 ] && echo "System upgrade && install pakeages complete."
+    [ $? -eq 0 ] && echo "System upgrade and package installation complete."
 }
 
 # Set timezone synchronization
@@ -67,9 +65,9 @@ timezone_config()
 {
     echo "Setting timezone..."
     /usr/bin/timedatectl | grep "Asia/Shanghai"
-    if [ $? -eq 0 ];then
-        echo "System timezone is Asia/Shanghai."
-        else
+    if [ $? -eq 0 ]; then
+        echo "System timezone is already Asia/Shanghai."
+    else
         timedatectl set-local-rtc 0 && timedatectl set-timezone Asia/Shanghai
     fi
     # config chrony
@@ -79,7 +77,7 @@ timezone_config()
     sed -i 's/server 2.centos.pool.ntp.org iburst/server ntp.tuna.tsinghua.edu.cn iburst/g' /etc/chrony.conf
     sed -i 's/server 3.centos.pool.ntp.org iburst/server cn.ntp.org.cn iburst/g' /etc/chrony.conf
     systemctl restart chronyd.service
-    [ $? -eq 0 ] && echo "Setting timezone && Sync network time complete."
+    [ $? -eq 0 ] && echo "Timezone setting and network time synchronization complete."
 }
 
 # disable selinux
@@ -87,32 +85,26 @@ selinux_config()
 {
     sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
     setenforce 0
-    echo "Dsiable selinux complete."
+    echo "SELinux disabled."
 }
 
-# ulimit comfig
+# ulimit config
 ulimit_config()
 {
-echo "Starting config ulimit..."
-cat >> /etc/security/limits.conf <<EOF
+    echo "Starting ulimit configuration..."
+    cat >> /etc/security/limits.conf <<EOF
 * soft nproc 8192
 * hard nproc 8192
 * soft nofile 8192
 * hard nofile 8192
 EOF
 
-[ $? -eq 0 ] && echo "Ulimit config complete!"
-
+    [ $? -eq 0 ] && echo "Ulimit configuration complete!"
 }
 
 # sshd config
 sshd_config(){
-    echo "Starting config sshd..."
-    #sed -i '/^#Port/s/#Port 22/Port 2188/g' /etc/ssh/sshd_config
-    #sed -i "$ a\ListenAddress 0.0.0.0:2188\nListenAddress 0.0.0.0:22 " /etc/ssh/sshd_config
-    #sed -i '/^#UseDNS/s/#UseDNS yes/UseDNS no/g' /etc/ssh/sshd_config
-    #sed -i 's/#PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
-    #sed -i 's/#PermitEmptyPasswords no/PermitEmptyPasswords no/g' /etc/ssh/sshd_config
+    echo "Starting SSH configuration..."
     sed -i '$a PasswordAuthentication yes' /etc/ssh/sshd_config
     sed -i '$a UseDNS no' /etc/ssh/sshd_config
     sed -i '$a Port 2188' /etc/ssh/sshd_config
@@ -120,38 +112,37 @@ sshd_config(){
     sed -i '$a PubkeyAuthentication yes' /etc/ssh/sshd_config
     sed -i '$a Protocol 2,1' /etc/ssh/sshd_config
     systemctl restart sshd
-    [ $? -eq 0 ] && echo "SSH config complete."
+    [ $? -eq 0 ] && echo "SSH configuration complete."
     sshprot=$(grep "^Port " /etc/ssh/sshd_config | awk '{print $2}')
 }
 
 # firewalld config
 disable_firewalld(){
-    echo "Starting disable firewalld..."
-    rpm -qa | grep firewalld >> /dec/null
-    if [ $? -eq 0 ];then
+    echo "Starting to disable firewalld..."
+    rpm -qa | grep firewalld >> /dev/null
+    if [ $? -eq 0 ]; then
         systemctl stop firewalld  && systemctl disable firewalld
-        [ $? -eq 0 ] && echo "Dsiable firewalld complete."
+        [ $? -eq 0 ] && echo "Firewalld disabled."
     else
-        echo "Firewalld not install."
+        echo "Firewalld not installed."
     fi
 }
 
 # vim config
 vim_config() {
-    echo "Starting vim config..."
+    echo "Starting vim configuration..."
     /usr/bin/egrep pastetoggle /etc/vimrc >> /dev/null
-    if [ $? -eq 0 ];then
-        echo "vim already config"
+    if [ $? -eq 0 ]; then
+        echo "Vim already configured."
     else
         sed -i '$ a\set bg=dark\nset pastetoggle=<F9>' /etc/vimrc
     fi
-    echo "vim config complete."
+    echo "Vim configuration complete."
 }
 
 # sysctl config
-
 config_sysctl() {
-    echo "Staring config sysctl..."
+    echo "Starting sysctl configuration..."
     /usr/bin/cp -f /etc/sysctl.conf /etc/sysctl.conf.bak
     cat > /etc/sysctl.conf << EOF
 # Minimizing the amount of swapping
@@ -197,17 +188,17 @@ net.ipv4.conf.all.accept_redirects = 0
 EOF
 
     /usr/sbin/sysctl -p
-    [ $? -eq 0 ] && echo "Sysctl config complete."
+    [ $? -eq 0 ] && echo "Sysctl configuration complete."
 }
 
 # ipv6 config
 disable_ipv6() {
-    echo "Starting disable ipv6..."
-    sed -i '$ a\net.ipv6.conf.all.disable_ipv6 = 1\nnet.ipv6.conf.default.disable_ipv6 = 1' /etc/sysctl.conf
+    echo "Starting to disable IPv6..."
+    sed -i '$ a\net.ipv6.conf.all.disable_ipv6 = 1\net.ipv6.conf.default.disable_ipv6 = 1' /etc/sysctl.conf
     sed -i '$ a\AddressFamily inet' /etc/ssh/sshd_config
     systemctl restart sshd
     /usr/sbin/sysctl -p
-    echo "IPv6 was disabled."
+    echo "IPv6 disabled."
 }
 
 # password config
@@ -216,16 +207,16 @@ password_config() {
     sed -i 's/PASS_MIN_LEN    5/PASS_MIN_LEN    8/g' /etc/login.defs
     authconfig --passminlen=8 --update
     authconfig --enablereqlower --update
-    [ $? -eq 0 ] && echo "Config password rule complete."
+    [ $? -eq 0 ] && echo "Password rule configuration complete."
 }
 
 # disable no use service
-disable_serivces() {
+disable_services() {
     systemctl stop postfix && systemctl enable postfix
-    [ $? -eq 0 ] && echo "Disable postfix service complete."
+    [ $? -eq 0 ] && echo "Postfix service disabled."
 }
 
-#main function
+# main function
 main(){
     modify_hostname
     sleep 2
@@ -251,22 +242,45 @@ main(){
     sleep 2
     password_config
     sleep 2
-    disable_serivces
+    disable_services
     sleep 2
 }
 
-# execute main functions
-main
+# Parse command line arguments
+if [ "$#" -eq 0 ]; then
+    main
+else
+    for arg in "$@"; do
+        case $arg in
+            modify_hostname) modify_hostname ;;
+            user_add) user_add ;;
+            system_update) system_update ;;
+            timezone_config) timezone_config ;;
+            selinux_config) selinux_config ;;
+            ulimit_config) ulimit_config ;;
+            sshd_config) sshd_config ;;
+            disable_firewalld) disable_firewalld ;;
+            vim_config) vim_config ;;
+            config_sysctl) config_sysctl ;;
+            disable_ipv6) disable_ipv6 ;;
+            password_config) password_config ;;
+            disable_services) disable_services ;;
+            *) echo "Invalid option: $arg" ;;
+        esac
+        sleep 2
+    done
+fi
+
 echo "+------------------------------------------------------------------------+"
-echo "|            To initialization system all completed !!!                  |"
+echo "|            System initialization complete!!!                           |"
 echo "+------------------------------------------------------------------------+"
-echo "|                          Nice day to you                               |"
+echo "|                          Have a nice day                               |"
 echo "+------------------------------------------------------------------------+"
 echo "|                Modify your terminal link configuration                 |"
 echo "+------------------------------------------------------------------------+"
-echo "                        HostName    "$full_name"                          "
+echo "                        HostName    $full_name                          "
 echo "+------------------------------------------------------------------------+"
-echo "     username:"$new_username" | password:"$userpassword" port:"$sshprot"  "
+echo "     username: $new_username | password: $userpassword | port: $sshprot  "
 echo "+------------------------------------------------------------------------+"
 
 new_username=""
