@@ -1,10 +1,15 @@
 #!/bin/bash
-#
+###
 # @Author: 星空
-# @Date: 2024-01-05 17:32:29
-# @Last Modified by: 星空
-# @Last Modified time: 2024-01-05 17:32:29
-#
+# @Date: 2024-06-19 16:33:01
+# @LastEditTime: 2024-06-21 12:09:49
+# @LastEditors: 星空
+# @Description: Initialization CentOS 7.x script
+# QQ: 1595601223
+# Mail: pluto@xkzs.cc
+# Copyright (c) 2024 by xkzs.cc All Rights Reserved.
+###
+
 #################################################
 #  --Info
 #         Initialization CentOS 7.x script
@@ -27,8 +32,7 @@ declare -g userpassword
 declare -g sshprot
 
 # modify hostname
-modify_hostname()
-{
+modify_hostname() {
     read -p "Enter a name for the machine: " machine_name
     ip_address=$(hostname -I | awk '{print $1}')
     ip_last_two=$(echo "$ip_address" | awk -F. '{print $(NF-1)$NF}')
@@ -38,8 +42,7 @@ modify_hostname()
 }
 
 # add user
-user_add()
-{
+user_add() {
     read -p "Enter username for the new user: " new_username
     if id "$new_username" >/dev/null 2>&1; then
         echo "User $new_username already exists."
@@ -52,7 +55,7 @@ user_add()
 }
 
 # update system & install package
-system_update(){
+system_update() {
     echo "*** Starting system update and tool package installation... ***"
     yum install epel-release -y && yum -y update
     yum clean all && yum makecache
@@ -61,8 +64,7 @@ system_update(){
 }
 
 # Set timezone synchronization
-timezone_config()
-{
+timezone_config() {
     echo "Setting timezone..."
     /usr/bin/timedatectl | grep "Asia/Shanghai"
     if [ $? -eq 0 ]; then
@@ -81,28 +83,27 @@ timezone_config()
 }
 
 # disable selinux
-selinux_config()
-{
+selinux_config() {
     sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
     setenforce 0
     echo "SELinux disabled."
 }
 
 # ulimit config
-ulimit_config(){
+ulimit_config() {
     echo "Starting ulimit configuration..."
-    cat >> /etc/security/limits.conf <<EOF
+    cat >>/etc/security/limits.conf <<EOF
 * soft nproc 8192
 * hard nproc 8192
 * soft nofile 8192
 * hard nofile 8192
 EOF
 
-[ $? -eq 0 ] && echo "Ulimit configuration complete!"
+    [ $? -eq 0 ] && echo "Ulimit configuration complete!"
 }
 
 # sshd config
-sshd_config(){
+sshd_config() {
     echo "Starting SSH configuration..."
     sed -i '$a PasswordAuthentication yes' /etc/ssh/sshd_config
     sed -i '$a UseDNS no' /etc/ssh/sshd_config
@@ -116,11 +117,11 @@ sshd_config(){
 }
 
 # firewalld config
-disable_firewalld(){
+disable_firewalld() {
     echo "Starting to disable firewalld..."
-    rpm -qa | grep firewalld >> /dev/null
+    rpm -qa | grep firewalld >>/dev/null
     if [ $? -eq 0 ]; then
-        systemctl stop firewalld  && systemctl disable firewalld
+        systemctl stop firewalld && systemctl disable firewalld
         [ $? -eq 0 ] && echo "Firewalld disabled."
     else
         echo "Firewalld not installed."
@@ -130,7 +131,7 @@ disable_firewalld(){
 # vim config
 vim_config() {
     echo "Starting vim configuration..."
-    /usr/bin/egrep pastetoggle /etc/vimrc >> /dev/null
+    /usr/bin/egrep pastetoggle /etc/vimrc >>/dev/null
     if [ $? -eq 0 ]; then
         echo "Vim already configured."
     else
@@ -143,7 +144,7 @@ vim_config() {
 config_sysctl() {
     echo "Starting sysctl configuration..."
     /usr/bin/cp -f /etc/sysctl.conf /etc/sysctl.conf.bak
-    cat > /etc/sysctl.conf << EOF
+    cat >/etc/sysctl.conf <<EOF
 # Minimizing the amount of swapping
 vm.swappiness = 20
 vm.dirty_ratio = 80
@@ -216,7 +217,7 @@ disable_services() {
 }
 
 # main function
-main(){
+main() {
     modify_hostname
     sleep 2
     user_add
@@ -251,20 +252,20 @@ if [ "$#" -eq 0 ]; then
 else
     for arg in "$@"; do
         case $arg in
-            modify_hostname) modify_hostname ;;
-            user_add) user_add ;;
-            system_update) system_update ;;
-            timezone_config) timezone_config ;;
-            selinux_config) selinux_config ;;
-            ulimit_config) ulimit_config ;;
-            sshd_config) sshd_config ;;
-            disable_firewalld) disable_firewalld ;;
-            vim_config) vim_config ;;
-            config_sysctl) config_sysctl ;;
-            disable_ipv6) disable_ipv6 ;;
-            password_config) password_config ;;
-            disable_services) disable_services ;;
-            *) echo "Invalid option: $arg" ;;
+        modify_hostname) modify_hostname ;;
+        user_add) user_add ;;
+        system_update) system_update ;;
+        timezone_config) timezone_config ;;
+        selinux_config) selinux_config ;;
+        ulimit_config) ulimit_config ;;
+        sshd_config) sshd_config ;;
+        disable_firewalld) disable_firewalld ;;
+        vim_config) vim_config ;;
+        config_sysctl) config_sysctl ;;
+        disable_ipv6) disable_ipv6 ;;
+        password_config) password_config ;;
+        disable_services) disable_services ;;
+        *) echo "Invalid option: $arg" ;;
         esac
         sleep 2
     done

@@ -1,8 +1,15 @@
 #!/bin/bash
-# @Author: 星空
-# @Date: 2023-12-29 18:26:48
-# @Last Modified by: 星空
-# @Last Modified time: 2023-12-29 18:28:56
+###
+ # @Author: 星空
+ # @Date: 2024-06-19 16:33:01
+ # @LastEditTime: 2024-06-21 12:08:59
+ # @LastEditors: 星空
+ # @Description: Grab the corresponding log
+ # QQ: 1595601223
+ # Mail: pluto@xkzs.cc
+ # Copyright (c) 2024 by xkzs.cc All Rights Reserved.
+###
+
 
 # 提示用户输入日志文件路径
 read -p "Enter logfile: " logfile

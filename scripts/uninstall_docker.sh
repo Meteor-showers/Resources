@@ -1,4 +1,14 @@
 #!/bin/bash
+###
+ # @Author: 星空
+ # @Date: 2024-06-21 10:48:16
+ # @LastEditTime: 2024-06-21 12:12:23
+ # @LastEditors: 星空
+ # @Description: 一键卸载 Docker 脚本
+ # QQ: 1595601223
+ # Mail: pluto@xkzs.cc
+ # Copyright (c) 2024 by xkzs.cc All Rights Reserved.
+###
 
 # 检查是否具有root权限
 if [ "$(id -u)" != "0" ]; then

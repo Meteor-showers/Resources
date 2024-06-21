@@ -1,6 +1,15 @@
 #!/bin/bash
+###
+ # @Author: 星空
+ # @Date: 2024-06-19 16:33:01
+ # @LastEditTime: 2024-06-21 12:10:18
+ # @LastEditors: 星空
+ # @Description: 一键编译openresty
+ # QQ: 1595601223
+ # Mail: pluto@xkzs.cc
+ # Copyright (c) 2024 by xkzs.cc All Rights Reserved.
+###
 
-#一键编译openresty
 
 # https://szr-data.oss-cn-beijing.aliyuncs.com/resource/openresty-1.25.3.1.tgz?OSSAccessKeyId=LTAI5tE9zbQaebV85rF67y3B&Expires=37713261896&Signature=yMnOjRvva6FhaxXxGDa059JrZn0%3D
 
