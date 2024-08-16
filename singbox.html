@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成Singbox配置</title>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/32284743?v=4" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Meteor-showers/github_proxy@main/css/singbox.css?v=1.0">
+</head>
+
+<body onload="checkUrlParams()">
+
+    <div class="container">
+        <h1>
+            <img src="https://avatars.githubusercontent.com/u/32284743?v=4" alt="头像">
+            生成Singbox配置
+        </h1>
+        <div class="input-container">
+            <textarea id="subscriptionInput" placeholder="输入一个或多个订阅地址，每行一个" oninput="processSubscriptions()"></textarea>
+            <div id="error-message" class="error-message">请输入有效的链接！</div>
+        </div>
+        <div id="output-container" class="output-container">
+            <div id="output"></div>
+            <button class="copy-button" onclick="copyToClipboard()">复制</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/Meteor-showers/github_proxy@main/js/singbox.js?v=1.0"></script>
+    <script src="https://cdn.jsdelivr.net/gh/Meteor-showers/github_proxy@main/js/Disable.js?v=1.0"></script>
+</body>
+
+</html>
