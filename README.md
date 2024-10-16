@@ -1,4 +1,4 @@
-# 个人 Resources
+# 个人 [Resources](https://github.com/Meteor-showers/Resources)
 
 ## 简介
 这个项目是一个 个人使用的资源库，包含各类实用工具。
