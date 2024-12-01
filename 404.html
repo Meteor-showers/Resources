@@ -1,0 +1,206 @@
+<!--<html>-->
+<!--<head><title>404 Not Found</title></head>-->
+<!--<body>-->
+<!--<center><h1>404 Not Found</h1></center>-->
+<!--<hr><center>nginx</center>-->
+<!--</body>-->
+<!--</html>-->
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>404</title>
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+    box-sizing: border-box;
+    color: inherit;
+}
+ 
+body {
+    background-image: linear-gradient(120deg, #4f0088 0%, #000000 100%);
+    height: 100vh;
+}
+ 
+h1 {
+    font-size: 45vw;
+    text-align: center;
+    position: fixed;
+    width: 100vw;
+    z-index: 1;
+    color: #ffffff26;
+    text-shadow: 0 0 50px rgba(0, 0, 0, 0.07);
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+    font-family: "Montserrat", monospace;
+}
+ 
+div {
+    background: rgba(0, 0, 0, 0);
+    width: 70vw;
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+    margin: 0 auto;
+    padding: 30px 30px 10px;
+    box-shadow: 0 0 150px -20px rgba(0, 0, 0, 0.5);
+    z-index: 3;
+}
+ 
+P {
+    font-family: "Share Tech Mono", monospace;
+    color: #f5f5f5;
+    margin: 0 0 20px;
+    font-size: 17px;
+    line-height: 1.2;
+}
+ 
+span {
+    color: #f0c674;
+}
+ 
+i {
+    color: #8abeb7;
+}
+ 
+div a {
+    text-decoration: none;
+}
+ 
+b {
+    color: #81a2be;
+}
+ 
+a.avatar {
+    position: fixed;
+    bottom: 15px;
+    right: -100px;
+    -webkit-animation: slide 0.5s 4.5s forwards;
+            animation: slide 0.5s 4.5s forwards;
+    display: block;
+    z-index: 4
+}
+ 
+a.avatar img {
+    border-radius: 100%;
+    width: 44px;
+    border: 2px solid white;
+}
+ 
+@-webkit-keyframes slide {
+    from {
+        right: -100px;
+        -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+        opacity: 0;
+    }
+    to {
+        right: 15px;
+        -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+        opacity: 1;
+    }
+}
+ 
+@keyframes slide {
+    from {
+        right: -100px;
+        -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+        opacity: 0;
+    }
+    to {
+        right: 15px;
+        -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+        opacity: 1;
+    }
+}
+</style>
+</head>
+<body>
+<h1>404 Not Found</h1>
+<div><p>> <span>ERROR CODE</span>: "<i>HTTP 404 Not Found</i>"</p>
+<p>> <span>ERROR DESCRIPTION</span>: "<i>未能找到该对象</i>"</p>
+<p>> <span>ERROR POSSIBLY CAUSED BY</span>: <b><br>可能是你来错地方咯。<br>也可能是博主没有设置好正确的路径。<br>也可能路径没错但是该资源已经被移动到其他地方了。<br>当然也有可能该资源已被删除了。<br>或者压根就不存在该资源。</b></p>
+<p>> <span>SOME PAGES ON THIS SERVER HAVE BEEN LOST</span></p><p>> <span>HAVE A NICE DAY SIR AXLEROD :-)</span></p>
+</div>
+ 
+ 
+<script>
+var str = document.getElementsByTagName('div')[0].innerHTML.toString();
+var i = 0;
+document.getElementsByTagName('div')[0].innerHTML = "";
+ 
+setTimeout(function() {
+    var se = setInterval(function() {
+        i++;
+        document.getElementsByTagName('div')[0].innerHTML = str.slice(0, i) + "|";
+        if (i == str.length) {
+            clearInterval(se);
+            document.getElementsByTagName('div')[0].innerHTML = str;
+        }
+    }, 10);
+},0);
+</script>
+
+
+<script type="text/javascript">
+document.oncontextmenu = new Function("return false;");
+document.onkeydown = function(){
+    if(window.event && window.event.keyCode == 123) {
+        window.close();
+        event.keyCode=0;
+        event.returnValue=false;
+    }
+    if(window.event && window.event.keyCode == 13) {
+        window.event.keyCode = 505;
+    }
+    if(window.event && window.event.keyCode == 8) {
+        alert(str+"\n请使用Del键进行字符的删除操作！");
+        window.event.returnValue=false;
+    }
+}
+document.oncopy = function (event){
+    if(window.event){
+        event = window.event;
+    }try{
+        var the = event.srcElement;
+        if(!((the.tagName == "INPUT" && the.type.toLowerCase() == "text") || the.tagName == "TEXTAREA")){
+        return false;
+    }
+        return true;
+    }catch (e){
+        return false;
+    }
+}
+document.onselectstart = function (event){
+    if(window.event){
+        event = window.event;
+    }try{
+        var the = event.srcElement;
+    if (!((the.tagName == "INPUT" && the.type.toLowerCase() == "text") || the.tagName == "TEXTAREA")){
+        return false;
+    }
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+document.onkeydown = function(){
+    if (event.ctrlKey && window.event.keyCode==83){
+        return false;
+    }
+}
+</script>
+
+</body>
+</html>
